@@ -37,7 +37,6 @@ const navigation = [
   { name: "Search", href: "/search", icon: Search },
   { name: "Library", href: "/library", icon: Library },
   { name: "Users", href: "/users", icon: Users },
-  { name: "Settings", href: "/settings", icon: Settings },
 ];
 
 const accentColors = [

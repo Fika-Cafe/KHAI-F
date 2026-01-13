@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, UserPlus, MoreVertical, Copy } from "lucide-react";
+import { Search, UserPlus, MoreVertical, Copy, RefreshCcw } from "lucide-react";
 import { request } from "@/lib/req";
 
 type ApiProfile = {
@@ -166,7 +166,7 @@ export function UserManagement() {
           onClick={fetchMembers}
           disabled={loading}
         >
-          <UserPlus className="size-4" />
+          <RefreshCcw className="size-4" />
           Refresh
         </Button>
       </div>
