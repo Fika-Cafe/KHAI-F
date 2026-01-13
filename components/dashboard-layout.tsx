@@ -15,6 +15,7 @@ import {
   Sun,
   Upload,
   Palette,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -32,6 +33,7 @@ import { UploadModal } from "@/components/upload-modal";
 import { verifyProfile } from "@/lib/verifications";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Chat", href: "/chat", icon: Sparkles },
   { name: "Search", href: "/search", icon: Search },
   { name: "Library", href: "/library", icon: Library },
   { name: "Users", href: "/users", icon: Users },
