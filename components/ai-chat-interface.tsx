@@ -6,14 +6,15 @@ import { createChat } from "@n8n/chat";
 
 export default function ChatInterface() {
   useEffect(() => {
-    createChat({
+    const chatApp = createChat({
       webhookUrl: `${process.env.NEXT_PUBLIC_HOSTEDCHAT}`,
       webhookConfig: {
         method: "POST",
         headers: {},
       },
       target: "#n8n-chat",
-      mode: "window",
+      mode: "fullscreen",
+      showWindowCloseButton: false,
       chatInputKey: "chatInput",
       chatSessionKey: "sessionId",
       loadPreviousSession: true,
@@ -21,21 +22,40 @@ export default function ChatInterface() {
       showWelcomeScreen: false,
       defaultLanguage: "en",
       initialMessages: [
-        "Hi there! 👋",
-        "My name is Nathan. How can I assist you today?",
+        "My name is KHAI. How can I assist you today?",
       ],
       i18n: {
         en: {
-          title: "Hi there! 👋",
-          subtitle: "Start a chat. We're here to help you 24/7.",
-          footer: "",
+          title: "KnowledgeHub AI Assistant",
+          subtitle: "this is our personal assistant, feel free to ask me anything about the company documentation",
+          footer: "powered by KnowledgeHub AI",
           getStarted: "New Conversation",
           inputPlaceholder: "Type your question..",
-          closeButtonTooltip: "Close chat",
+          closeButtonTooltip: "Close chat and return to the dashboard",
         },
       },
-      enableStreaming: false,
+      enableStreaming: true,
     });
+
+    const container = document.getElementById("n8n-chat");
+    if (container) {
+      container.style.height = "100%";
+    }
+
+    return () => {
+      if (container) {
+        container.innerHTML = "";
+      }
+      (chatApp as unknown as { unmount?: () => void })?.unmount?.();
+    };
   }, []);
-  return <div id="n8n-chat" />;
+
+  return (
+    <section className="h-[calc(100vh-140px)] min-h-[600px] w-full overflow-hidden rounded-xl border border-border bg-card shadow">
+      <div className="flex h-full flex-col">
+
+        <div id="n8n-chat" className="flex-1 bg-background/60" />
+      </div>
+    </section>
+  );
 }
