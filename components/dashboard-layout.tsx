@@ -117,7 +117,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (!userId) return;
     const runVerify = async () => {
-      await verifyProfile(userId);
+      await verifyProfile(router, userId);
       loadUserInfoFromStorage();
     };
     runVerify();

@@ -49,10 +49,8 @@ export function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps) {
         });
 
         localStorage.setItem("user_id", response.user.id);
-        localStorage.setItem("user_info", response.user.name);
-        await verifyProfile(response.user.id);
+        await verifyProfile(router, response.user.id);
         router.push("/dashboard");
-
       } catch (error) {
         setStatusMessage("No fue posible iniciar sesión.");
       } finally {

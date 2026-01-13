@@ -1,14 +1,23 @@
-import router from "next/router";
+// Helper used on the client to ensure the user has a profile.
+// Pass the router from `useRouter()` when calling.
+"use client";
+
+type RouterLike = { push: (href: string) => void };
 import { request } from "./req";
 
-const verifyProfile = async (userId: string) => {
+const verifyProfile = async (router: RouterLike, userId: string) => {
   try {
     const profileVerify = await request(
       `/profile/verifyProfile/${userId}`,
       "GET",
       {}
     );
-    console.log(profileVerify);
+
+    if (profileVerify?.status !== 200 || !profileVerify?.data) {
+      router.push(`/create-profile`);
+      return;
+    }
+
     let userData: { name: string; team: string } = {
       name: profileVerify.data.name,
       team:
@@ -18,11 +27,9 @@ const verifyProfile = async (userId: string) => {
     };
 
     localStorage.setItem("user_info", JSON.stringify(userData));
-    if (profileVerify?.status !== 200) {
-      router.push(`/create-profile`);
-    }
   } catch (error) {
     console.error("verifyProfile failed", error);
+    router.push(`/create-profile`);
   }
 };
 export { verifyProfile };
