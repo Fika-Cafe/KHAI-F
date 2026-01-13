@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
+import { request } from "@/lib/req";
 import {
   Home,
   Search,
@@ -14,6 +15,7 @@ import {
   Sun,
   Upload,
   Palette,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
@@ -31,6 +33,7 @@ import { UploadModal } from "@/components/upload-modal";
 import { verifyProfile } from "@/lib/verifications";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
+  { name: "Chat", href: "/chat", icon: Sparkles },
   { name: "Search", href: "/search", icon: Search },
   { name: "Library", href: "/library", icon: Library },
   { name: "Users", href: "/users", icon: Users },
@@ -53,11 +56,37 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
   const [accentColor, setAccentColor] = useState(accentColors[0].value);
+  const [userId, setUserId] = useState<string | null>(null);
+  const [userInfo, setUserInfo] = useState<{
+    name: string;
+    team: string;
+  } | null>(null);
   const [isInitialized, setIsInitialized] = useState(false);
 
+  const loadUserInfoFromStorage = useCallback(() => {
+    if (typeof window === "undefined") return;
+    const savedUserInfo = localStorage.getItem("user_info");
+    if (!savedUserInfo) return;
+    try {
+      const parsed = JSON.parse(savedUserInfo);
+      if (parsed?.name || parsed?.team) {
+        setUserInfo({
+          name: parsed.name ?? "User",
+          team: parsed.team ?? "",
+        });
+      }
+    } catch (err) {
+      console.error("Failed to parse user_info", err);
+    }
+  }, []);
+
   useEffect(() => {
+    // Guard against SSR: localStorage is only available in the browser.
+    if (typeof window === "undefined") return;
+
     const savedTheme = localStorage.getItem("theme") as "light" | "dark" | null;
     const savedAccentColor = localStorage.getItem("accentColor");
+    const savedUserId = localStorage.getItem("user_id");
 
     if (savedTheme) {
       setTheme(savedTheme);
@@ -65,8 +94,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     if (savedAccentColor) {
       setAccentColor(savedAccentColor);
     }
+    if (savedUserId) {
+      setUserId(savedUserId);
+    }
+    loadUserInfoFromStorage();
     setIsInitialized(true);
-  }, []);
+  }, [loadUserInfoFromStorage]);
 
   useEffect(() => {
     if (!isInitialized) return;
@@ -82,19 +115,33 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   }, [accentColor, isInitialized]);
 
   useEffect(() => {
+    if (!userId) return;
     const runVerify = async () => {
-      await verifyProfile(localStorage.getItem("user_id"));
+      await verifyProfile(userId);
+      loadUserInfoFromStorage();
     };
     runVerify();
-  }, [router]);
+  }, [router, userId, loadUserInfoFromStorage]);
 
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
 
   const handleLogout = useCallback(() => {
-    router.push("/");
+    request("/auth/logout", "POST", {}).then(async () => {
+      localStorage.removeItem("user_id");
+      localStorage.removeItem("user_info");
+      router.push("/");
+    });
   }, [router]);
+
+  const userInitials =
+    (userInfo?.name ?? "User")
+      .split(" ")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join("") || "U";
 
   return (
     <div className="min-h-screen bg-background">
@@ -177,24 +224,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   <button className="flex items-center gap-3 w-full hover:bg-sidebar-accent rounded-lg p-2 transition-colors">
                     <Avatar className="size-8">
                       <AvatarFallback className="bg-sidebar-primary text-sidebar-primary-foreground text-sm">
-                        JD
+                        {userInitials}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 text-left">
                       <p className="text-sm font-medium text-sidebar-foreground">
-                        John Doe
+                        {userInfo?.name ?? "User"}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        john@acme.com
+                        {userInfo?.team ?? "Team"}
                       </p>
                     </div>
                   </button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
-                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>Profile</DropdownMenuItem>
-                  <DropdownMenuItem>Preferences</DropdownMenuItem>
+                  <DropdownMenuLabel>KHAI</DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <button onClick={handleLogout} className="w-full text-left">

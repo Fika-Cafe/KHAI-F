@@ -21,7 +21,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Search, UserPlus, MoreVertical } from "lucide-react";
+import { Search, UserPlus, MoreVertical, Copy } from "lucide-react";
 import { request } from "@/lib/req";
 
 type ApiProfile = {
@@ -63,6 +63,7 @@ export function UserManagement() {
   );
   const [members, setMembers] = useState<ApiMember[]>([]);
   const [teamName, setTeamName] = useState("Team");
+  const [teamId, setTeamId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const userId =
@@ -90,9 +91,12 @@ export function UserManagement() {
         "GET",
         {}
       )) as ApiTeamResponse;
+
       const team = response?.team;
       setTeamName(team?.name ?? "Team");
-      setMembers(Array.isArray(team?.members) ? team!.members : []);
+      setTeamId(team?.id ?? null);
+      const members = Array.isArray(team?.members) ? team?.members ?? [] : [];
+      setMembers(members);
     } catch (err) {
       console.error("Error fetching team members", err);
     } finally {
@@ -104,6 +108,15 @@ export function UserManagement() {
     fetchMembers();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  const copyTeamId = async () => {
+    if (!teamId || typeof navigator === "undefined") return;
+    try {
+      await navigator.clipboard.writeText(teamId);
+    } catch (err) {
+      console.error("Failed to copy team id", err);
+    }
+  };
 
   const filteredMembers = members.filter((member) => {
     const matchesRole = filterRole === "all" || member.role === filterRole;
@@ -130,6 +143,22 @@ export function UserManagement() {
           <p className="text-muted-foreground">
             Manage team members and their permissions
           </p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
+            <span className="flex items-center gap-2">
+              <span>Team ID:</span>
+              <span className="font-mono text-foreground">{teamId ?? "-"}</span>
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+              onClick={copyTeamId}
+              disabled={!teamId}
+            >
+              <Copy className="size-4" />
+              Copy ID
+            </Button>
+          </div>
         </div>
         <Button
           variant="outline"

@@ -61,7 +61,7 @@ This document outlines the key initiatives and deliverables for Q4 2024.
       {/* Header */}
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-start gap-4 flex-1">
-          <div className="size-14 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+          <div className="size-14 bg-muted rounded-lg flex items-center justify-center shrink-0">
             <FileText className="size-7 text-muted-foreground" />
           </div>
           <div className="flex-1">
@@ -187,7 +187,7 @@ This document outlines the key initiatives and deliverables for Q4 2024.
           </Card>
 
           {/* AI Actions */}
-          <Card className="border-border border-primary/20 bg-primary/5">
+          <Card className="border-primary/20 bg-primary/5">
             <CardContent className="p-4">
               <h3 className="text-sm font-semibold text-foreground mb-3">AI Actions</h3>
               <div className="space-y-2">

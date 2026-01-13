@@ -2,7 +2,7 @@
 
 import type React from "react";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -29,23 +29,32 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
   const [linkTitle, setLinkTitle] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [userId, setUserId] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setSelectedFiles(Array.from(e.target.files));
     }
   };
-  const userId = localStorage.getItem("user_id");
 
-  const formData = new FormData();
-
-  formData.append("file", selectedFiles[0]);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const savedUserId = localStorage.getItem("user_id");
+    if (savedUserId) setUserId(savedUserId);
+  }, []);
 
   const uploadFiles = async () => {
-    const files = await uploadRequest(`/docs/upload/${userId}`, formData);
+    if (!userId || selectedFiles.length === 0) return;
+
+    const formData = new FormData();
+    formData.append("file", selectedFiles[0]);
+
+    await uploadRequest(`/docs/upload/${userId}`, formData);
   };
 
   const handleUpload = async () => {
+    if (!userId || selectedFiles.length === 0) return;
+
     uploadFiles();
 
     setIsUploading(true);
@@ -68,7 +77,6 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
     }, 100);
   };
   const handleLinkSubmit = async () => {
-    const userId = localStorage.getItem("user_id");
     if (!userId) return;
 
     await request(`/docs/uploadLink/${userId}`, "POST", {

@@ -8,8 +8,13 @@ const verifyProfile = async (userId: string) => {
       "GET",
       {}
     );
-    let userData: { name: string } = {
+    console.log(profileVerify);
+    let userData: { name: string; team: string } = {
       name: profileVerify.data.name,
+      team:
+        profileVerify.data.team?.[0]?.name ??
+        profileVerify.data.memberships?.[0]?.team?.name ??
+        "",
     };
 
     localStorage.setItem("user_info", JSON.stringify(userData));
