@@ -85,7 +85,7 @@ export function RecentDocuments() {
             })
             .map((doc) => ({
               id: doc.id,
-              title: doc.title || "Documento sin título",
+              title: doc.title || "Untitled document",
               createdAt: doc.created_at ?? "",
               type: "document" as const,
             }))
@@ -98,7 +98,7 @@ export function RecentDocuments() {
             })
             .map((link) => ({
               id: link.id,
-              title: link.title || link.url || "Enlace sin título",
+              title: link.title || link.url || "Untitled link",
               createdAt: link.created_at ?? "",
               type: "link" as const,
               url: link.url,
@@ -136,13 +136,13 @@ export function RecentDocuments() {
       <CardContent className="space-y-3">
         {loading ? (
           <p className="text-sm text-muted-foreground">
-            Cargando documentos recientes...
+            Loading recent documents...
           </p>
         ) : null}
 
         {!loading && items.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No hay documentos o enlaces recientes.
+            No recent documents or links.
           </p>
         ) : null}
 

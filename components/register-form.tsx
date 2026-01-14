@@ -37,19 +37,19 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
 
       if (password !== confirmPassword) {
         setStatus("error");
-        setStatusMessage("Las contraseñas no coinciden.");
+        setStatusMessage("Passwords do not match.");
         return;
       }
 
       if (password.length < 8) {
         setStatus("error");
-        setStatusMessage("La contraseña debe tener al menos 8 caracteres.");
+        setStatusMessage("Password must be at least 8 characters.");
         return;
       }
 
       if (!trimmedEmail) {
         setStatus("error");
-        setStatusMessage("Agrega un correo válido.");
+        setStatusMessage("Enter a valid email.");
         return;
       }
 
@@ -65,7 +65,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
         setStatus("success");
       } catch (error) {
         setStatus("error");
-        setStatusMessage("No fue posible crear la cuenta.");
+        setStatusMessage("Could not create the account.");
       } finally {
         setIsSubmitting(false);
       }
@@ -81,7 +81,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
       <CardContent className="pt-6">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="register-email">Correo electrónico</Label>
+            <Label htmlFor="register-email">Email</Label>
             <Input
               id="register-email"
               type="email"
@@ -124,7 +124,7 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
           )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? "Enviando..." : "Create account"}
+            {isSubmitting ? "Submitting..." : "Create account"}
           </Button>
         </form>
       </CardContent>

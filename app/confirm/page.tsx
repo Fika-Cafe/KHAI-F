@@ -17,22 +17,21 @@ export default function ConfirmPage() {
   );
 
   const [status, setStatus] = useState<Status>("idle");
-  const [message, setMessage] = useState("Procesando el código recibido...");
+  const [message, setMessage] = useState("Processing the received code...");
   const [retryCount, setRetryCount] = useState(0);
 
   const confirmCode = useCallback(async () => {
-
     setStatus("loading");
-    setMessage("Validando el código con el servidor...");
+    setMessage("Validating the code with the server...");
 
     try {
       await request("/auth/confirm", "POST", { codigo: code });
       setStatus("success");
-      setMessage("Código confirmado. Puedes volver a la aplicación.");
+      setMessage("Code confirmed. You can return to the app.");
     } catch (error) {
       setStatus("error");
       setMessage(
-        "No pudimos confirmar el código. Inténtalo de nuevo o solicita un nuevo enlace."
+        "We couldn't confirm the code. Try again or request a new link."
       );
     }
   }, [code]);
@@ -51,10 +50,10 @@ export default function ConfirmPage() {
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
       <Card className="w-full max-w-md border-border">
         <CardHeader className="space-y-2">
-          <CardTitle>Confirmación de código</CardTitle>
+          <CardTitle>Code confirmation</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Extraemos el parámetro <code>codigo</code> de la URL para validar tu
-            sesión con el proveedor de autenticación.
+            We extract the <code>codigo</code> parameter from the URL to verify
+            your session with the authentication provider.
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -73,7 +72,7 @@ export default function ConfirmPage() {
           {isLoading && (
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <span className="h-2 w-2 animate-ping rounded-full bg-primary" />
-              <span>Procesando...</span>
+              <span>Processing...</span>
             </div>
           )}
 
@@ -83,7 +82,7 @@ export default function ConfirmPage() {
               disabled={isLoading}
               className="w-full"
             >
-              Reintentar
+              Retry
             </Button>
           )}
         </CardContent>

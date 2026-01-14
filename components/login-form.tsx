@@ -37,7 +37,7 @@ export function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps) {
       setStatusMessage(null);
 
       if (!trimmedEmail || !password) {
-        setStatusMessage("Agrega tus credenciales para continuar.");
+        setStatusMessage("Enter your credentials to continue.");
         setIsLoading(false);
         return;
       }
@@ -52,7 +52,7 @@ export function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps) {
         await verifyProfile(router, response.user.id);
         router.push("/dashboard");
       } catch (error) {
-        setStatusMessage("No fue posible iniciar sesión.");
+        setStatusMessage("We couldn't sign you in.");
       } finally {
         setIsLoading(false);
       }
@@ -62,17 +62,17 @@ export function LoginForm({ onSubmit, onForgotPassword }: LoginFormProps) {
 
   const handleForgot = useCallback(async () => {
     if (!trimmedEmail) {
-      setResetMessage("Ingresa tu correo para recibir el enlace.");
+      setResetMessage("Enter your email to receive the link.");
       return;
     }
 
     try {
       await Promise.resolve(onForgotPassword?.(trimmedEmail));
       setResetMessage(
-        "Revisa tu bandeja para restablecer la contraseña o contacta al equipo de soporte."
+        "Check your inbox to reset the password or contact the support team."
       );
     } catch (error) {
-      setResetMessage("No fue posible generar el enlace. Intenta nuevamente.");
+      setResetMessage("We couldn't generate the link. Please try again.");
     }
   }, [trimmedEmail, onForgotPassword]);
 

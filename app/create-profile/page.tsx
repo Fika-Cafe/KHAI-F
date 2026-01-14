@@ -46,33 +46,33 @@ export default function CreateProfilePage() {
       setStatusMessage(null);
 
       if (!name.trim()) {
-        setStatusMessage("Agrega un nombre para continuar.");
+        setStatusMessage("Add a name to continue.");
         setIsSubmitting(false);
         return;
       }
 
       if (isOwner && !teamName.trim()) {
-        setStatusMessage("El owner debe nombrar el equipo.");
+        setStatusMessage("The owner must name the team.");
         setIsSubmitting(false);
         return;
       }
 
       if (!isOwner && !teamCode.trim()) {
-        setStatusMessage("El member debe ingresar el código del equipo.");
+        setStatusMessage("Members must enter the team code.");
         setIsSubmitting(false);
         return;
       }
 
       const userId = localStorage.getItem("user_id");
       if (!userId) {
-        setStatusMessage("Tu sesión expiró. Inicia sesión nuevamente.");
+        setStatusMessage("Your session expired. Please sign in again.");
         setIsSubmitting(false);
         return;
       }
 
       try {
         console.log(
-          "etos son los datos que se envian: ",
+          "sending profile payload:",
           userId,
           name,
           role,
@@ -90,13 +90,11 @@ export default function CreateProfilePage() {
         if (response.status == 201) {
           router.push("/dashboard");
         } else {
-          setStatusMessage(
-            "No fue posible crear el perfil. Intenta nuevamente."
-          );
+          setStatusMessage("Could not create the profile. Please try again.");
         }
       } catch (error) {
         console.error(error);
-        setStatusMessage("No fue posible crear el perfil. Intenta nuevamente.");
+        setStatusMessage("Could not create the profile. Please try again.");
       } finally {
         setIsSubmitting(false);
       }
@@ -109,9 +107,9 @@ export default function CreateProfilePage() {
       <section className="w-full max-w-lg space-y-6">
         <header className="text-center">
           <p className="text-sm text-muted-foreground">
-            Paso 2 · Completa tu perfil
+            Step 2 · Complete your profile
           </p>
-          <h1 className="text-2xl font-bold text-foreground">Define tu rol</h1>
+          <h1 className="text-2xl font-bold text-foreground">Set your role</h1>
           {presetEmail && (
             <p className="text-sm text-muted-foreground">
               Email: {presetEmail}
@@ -123,12 +121,12 @@ export default function CreateProfilePage() {
           <CardContent className="space-y-4">
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="profile-name">Nombre completo</Label>
+                <Label htmlFor="profile-name">Full name</Label>
                 <Input
                   id="profile-name"
                   value={name}
                   onChange={(event) => setName(event.target.value)}
-                  placeholder="Tu nombre"
+                  placeholder="Your name"
                 />
               </div>
 
@@ -139,7 +137,7 @@ export default function CreateProfilePage() {
                   onValueChange={(value) => setRole(value as RoleType)}
                 >
                   <SelectTrigger size="default">
-                    <SelectValue placeholder="Selecciona un rol" />
+                    <SelectValue placeholder="Select a role" />
                   </SelectTrigger>
                   <SelectContent position="popper">
                     {ROLE_TYPES.map((option) => (
@@ -153,7 +151,7 @@ export default function CreateProfilePage() {
 
               {isOwner ? (
                 <div className="space-y-2">
-                  <Label htmlFor="team-name">Nombre del team</Label>
+                  <Label htmlFor="team-name">Team name</Label>
                   <Input
                     id="team-name"
                     value={teamName}
@@ -163,7 +161,7 @@ export default function CreateProfilePage() {
                 </div>
               ) : (
                 <div className="space-y-2">
-                  <Label htmlFor="team-code">Código de team</Label>
+                  <Label htmlFor="team-code">Team code</Label>
                   <Input
                     id="team-code"
                     value={teamCode}
@@ -178,7 +176,7 @@ export default function CreateProfilePage() {
               )}
 
               <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Guardando..." : "Continuar a dashboard"}
+                {isSubmitting ? "Saving..." : "Continue to dashboard"}
               </Button>
             </form>
           </CardContent>

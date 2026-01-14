@@ -195,11 +195,11 @@ export function UploadModal({ open, onOpenChange }: UploadModalProps) {
           <TabsContent value="link" className="space-y-4 mt-4">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="link-title">Título</Label>
+                <Label htmlFor="link-title">Title</Label>
                 <Input
                   id="link-title"
                   type="text"
-                  placeholder="Ejemplo"
+                  placeholder="Example"
                   value={linkTitle}
                   onChange={(e) => setLinkTitle(e.target.value)}
                 />

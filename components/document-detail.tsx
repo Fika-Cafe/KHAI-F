@@ -117,12 +117,11 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
         );
         const found = extractDocument(response);
         if (!found?.id) {
-          throw new Error(response?.message ?? "Documento no encontrado");
+          throw new Error(response?.message ?? "Document not found");
         }
         if (!cancelled) setDoc(found);
       } catch (err: any) {
-        if (!cancelled)
-          setError(err?.message ?? "No se pudo cargar el documento");
+        if (!cancelled) setError(err?.message ?? "Unable to load the document");
       } finally {
         if (!cancelled) setLoading(false);
       }
@@ -147,25 +146,23 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
   }, [doc?.content, doc?.source]);
 
   const ownerName = useMemo(
-    () => doc?.profile?.name ?? "Sin propietario",
+    () => doc?.profile?.name ?? "No owner",
     [doc?.profile]
   );
   const ownerInitials = useMemo(() => {
-    const name = doc?.profile?.name ?? "Sin propietario";
+    const name = doc?.profile?.name ?? "No owner";
     return (
       name
         .split(" ")
         .filter(Boolean)
         .slice(0, 2)
         .map((part) => part[0]?.toUpperCase())
-        .join("") || "SP"
+        .join("") || "NO"
     );
   }, [doc?.profile]);
 
   if (loading) {
-    return (
-      <p className="text-sm text-muted-foreground">Cargando documento...</p>
-    );
+    return <p className="text-sm text-muted-foreground">Loading document...</p>;
   }
 
   if (error) {
@@ -187,7 +184,7 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
               {doc.title}
             </h1>
             <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-              <Badge variant="secondary">{doc.source ?? "Documento"}</Badge>
+              <Badge variant="secondary">{doc.source ?? "Document"}</Badge>
               <span>•</span>
               <span>{formatBytes(doc.file_size)}</span>
               <span>•</span>
@@ -220,16 +217,16 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
             <CardContent className="p-6 space-y-6">
               <div>
                 <h2 className="text-lg font-semibold text-foreground mb-3">
-                  Descripción
+                  Description
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  {doc.title || "Documento sin título"}
+                  {doc.title || "Untitled document"}
                 </p>
               </div>
 
               <div>
                 <h2 className="text-lg font-semibold text-foreground mb-4">
-                  Vista previa
+                  Preview
                 </h2>
                 {objectUrl ? (
                   <div className="rounded-lg border border-border overflow-hidden bg-muted/40">
@@ -237,7 +234,7 @@ export function DocumentDetail({ documentId }: DocumentDetailProps) {
                   </div>
                 ) : (
                   <p className="text-sm text-muted-foreground">
-                    No hay contenido para mostrar.
+                    No content to display.
                   </p>
                 )}
               </div>

@@ -280,12 +280,12 @@ export function SearchResults() {
             <CardContent className="p-4 space-y-2">
               {log.results.length === 0 && (
                 <div className="text-xs text-muted-foreground">
-                  {new Date(log.created_at).toLocaleString()} — sin resultados
+                  {new Date(log.created_at).toLocaleString()} — no results
                 </div>
               )}
               {log.results.map((res) => {
                 const title =
-                  res.document?.title || res.links?.title || "Sin título";
+                  res.document?.title || res.links?.title || "Untitled";
                 return (
                   <div
                     key={res.id}

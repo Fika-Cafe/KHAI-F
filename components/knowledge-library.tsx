@@ -111,7 +111,7 @@ const formatDate = (date?: string) => {
 const normalizeDocuments = (docs: ApiDocument[]): LibraryDocument[] =>
   docs.map((doc) => ({
     id: doc.id,
-    title: doc.title || "Documento sin título",
+    title: doc.title || "Untitled document",
     fileType: formatMimeType(doc.source),
     size: formatFileSize(doc.file_size),
     owner: doc.profile?.name ?? doc.profile_id ?? "N/A",
@@ -121,7 +121,7 @@ const normalizeDocuments = (docs: ApiDocument[]): LibraryDocument[] =>
 const normalizeLinks = (items: ApiLink[]): LibraryLink[] =>
   items.map((link) => ({
     id: link.id,
-    title: link.title || link.url || "Enlace sin título",
+    title: link.title || link.url || "Untitled link",
     url: link.url,
     host: getHostname(link.url),
     owner: link.profile?.name ?? link.profile_id ?? "N/A",
@@ -245,8 +245,8 @@ export function KnowledgeLibrary() {
         className="w-full"
       >
         <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="documents">Documentos</TabsTrigger>
-          <TabsTrigger value="links">Enlaces</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="links">Links</TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -311,7 +311,7 @@ export function KnowledgeLibrary() {
       </div>
 
       {loading ? (
-        <p className="text-sm text-muted-foreground">Cargando documentos...</p>
+        <p className="text-sm text-muted-foreground">Loading documents...</p>
       ) : null}
 
       {/* Documents / Links content */}
@@ -413,7 +413,7 @@ export function KnowledgeLibrary() {
 
                 <Button asChild variant="outline" className="w-full">
                   <a href={link.url} target="_blank" rel="noreferrer">
-                    Abrir enlace
+                    Open link
                   </a>
                 </Button>
               </CardContent>
@@ -454,7 +454,7 @@ export function KnowledgeLibrary() {
 
                   <Button asChild variant="outline" className="shrink-0">
                     <a href={link.url} target="_blank" rel="noreferrer">
-                      Abrir
+                      Open
                     </a>
                   </Button>
                 </div>

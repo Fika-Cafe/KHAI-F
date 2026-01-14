@@ -53,7 +53,7 @@ export function MostSearched() {
         const normalized = dedupeById<MostViewed>(
           docsRaw.map((doc) => ({
             id: doc.id,
-            title: doc.title || "Documento sin título",
+            title: doc.title || "Untitled document",
             count: Number.isFinite(doc.count) ? Number(doc.count) : 0,
             owner: doc.profile?.name || doc.profile?.id || "N/A",
           }))
@@ -80,13 +80,13 @@ export function MostSearched() {
       <CardContent className="space-y-2">
         {loading ? (
           <p className="text-sm text-muted-foreground">
-            Cargando documentos más vistos...
+            Loading most viewed documents...
           </p>
         ) : null}
 
         {!loading && items.length === 0 ? (
           <p className="text-sm text-muted-foreground">
-            No hay documentos más vistos disponibles.
+            No most viewed documents available.
           </p>
         ) : null}
 
