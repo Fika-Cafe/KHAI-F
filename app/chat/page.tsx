@@ -1,9 +1,12 @@
 "use client";
 
-import dynamic from "next/dynamic";
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+import nextDynamic from "next/dynamic";
 import { DashboardLayout } from "@/components/dashboard-layout";
 
-const ChatInterface = dynamic(
+const ChatInterface = nextDynamic(
   () => import("@/components/ai-chat-interface"),
   { ssr: false, loading: () => <div>Loading chat...</div> }
 );
