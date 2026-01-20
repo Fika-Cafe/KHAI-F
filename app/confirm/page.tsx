@@ -1,6 +1,13 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
@@ -10,6 +17,14 @@ import { request } from "@/lib/req";
 type Status = "idle" | "loading" | "success" | "error";
 
 export default function ConfirmPage() {
+  return (
+    <Suspense fallback={<PageShell>Loading confirmation...</PageShell>}>
+      <ConfirmContent />
+    </Suspense>
+  );
+}
+
+function ConfirmContent() {
   const searchParams = useSearchParams();
   const code = useMemo(
     () => searchParams.get("access_token")?.trim() ?? "",
@@ -47,7 +62,7 @@ export default function ConfirmPage() {
   const isLoading = status === "loading";
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+    <PageShell>
       <Card className="w-full max-w-md border-border">
         <CardHeader className="space-y-2">
           <CardTitle>Code confirmation</CardTitle>
@@ -87,6 +102,14 @@ export default function ConfirmPage() {
           )}
         </CardContent>
       </Card>
+    </PageShell>
+  );
+}
+
+function PageShell({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-4">
+      {children}
     </div>
   );
 }
