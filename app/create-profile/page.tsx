@@ -1,6 +1,12 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import {
+  Suspense,
+  useCallback,
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -23,6 +29,14 @@ const ROLE_TYPES = [
 type RoleType = (typeof ROLE_TYPES)[number]["value"];
 
 export default function CreateProfilePage() {
+  return (
+    <Suspense fallback={<PageShell>Loading profile form...</PageShell>}>
+      <CreateProfileContent />
+    </Suspense>
+  );
+}
+
+function CreateProfileContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const presetEmail = useMemo(
@@ -103,7 +117,7 @@ export default function CreateProfilePage() {
   );
 
   return (
-    <main className="min-h-screen flex items-center justify-center bg-background px-4 py-10">
+    <PageShell>
       <section className="w-full max-w-lg space-y-6">
         <header className="text-center">
           <p className="text-sm text-muted-foreground">
@@ -111,9 +125,7 @@ export default function CreateProfilePage() {
           </p>
           <h1 className="text-2xl font-bold text-foreground">Set your role</h1>
           {presetEmail && (
-            <p className="text-sm text-muted-foreground">
-              Email: {presetEmail}
-            </p>
+            <p className="text-sm text-muted-foreground">Email: {presetEmail}</p>
           )}
         </header>
 
@@ -182,6 +194,14 @@ export default function CreateProfilePage() {
           </CardContent>
         </Card>
       </section>
+    </PageShell>
+  );
+}
+
+function PageShell({ children }: { children: ReactNode }) {
+  return (
+    <main className="min-h-screen flex items-center justify-center bg-background px-4 py-10">
+      {children}
     </main>
   );
 }
