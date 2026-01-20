@@ -1,8 +1,5 @@
 "use client";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
-
 import nextDynamic from "next/dynamic";
 import { DashboardLayout } from "@/components/dashboard-layout";
 
