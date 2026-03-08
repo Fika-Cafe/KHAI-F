@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { AlertCircle, CheckCircle2 } from "lucide-react";
 import { request } from "@/lib/req";
 
 interface RegisterFormValues {
@@ -58,11 +59,14 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
       setStatusMessage(null);
 
       try {
-        const response = await request("/auth/register", "POST", {
+        await request("/auth/register", "POST", {
           email: trimmedEmail,
           password,
         });
         setStatus("success");
+        setStatusMessage(
+          "Account need to be verified. Please verify your account from the email we sent you.",
+        );
       } catch (error) {
         setStatus("error");
         setStatusMessage("Could not create the account.");
@@ -70,11 +74,10 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
         setIsSubmitting(false);
       }
     },
-    [confirmPassword, onSubmit, password, trimmedEmail]
+    [confirmPassword, onSubmit, password, trimmedEmail],
   );
 
-  const statusClass =
-    status === "success" ? "text-emerald-500" : "text-destructive";
+  const isSuccess = status === "success";
 
   return (
     <Card className="border-border">
@@ -120,7 +123,22 @@ export function RegisterForm({ onSubmit }: RegisterFormProps = {}) {
           </div>
 
           {statusMessage && (
-            <p className={`text-sm ${statusClass}`}>{statusMessage}</p>
+            <div
+              className={`flex items-start gap-2 rounded-md border px-3 py-2 text-sm ${
+                isSuccess
+                  ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+                  : "border-destructive/30 bg-destructive/10 text-destructive"
+              }`}
+              role="status"
+              aria-live="polite"
+            >
+              {isSuccess ? (
+                <CheckCircle2 className="mt-0.5 size-4 shrink-0" />
+              ) : (
+                <AlertCircle className="mt-0.5 size-4 shrink-0" />
+              )}
+              <span>{statusMessage}</span>
+            </div>
           )}
 
           <Button type="submit" className="w-full" disabled={isSubmitting}>

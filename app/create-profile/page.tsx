@@ -19,10 +19,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Copy } from "lucide-react";
 import { request } from "@/lib/req";
 
 const ROLE_TYPES = [
-  { value: "Owner", label: "Owner" },
+  // { value: "Owner", label: "Owner" },
   { value: "Member", label: "Member" },
 ] as const;
 
@@ -41,7 +42,7 @@ function CreateProfileContent() {
   const searchParams = useSearchParams();
   const presetEmail = useMemo(
     () => searchParams.get("email") ?? "",
-    [searchParams]
+    [searchParams],
   );
 
   const [name, setName] = useState("");
@@ -50,8 +51,19 @@ function CreateProfileContent() {
   const [teamCode, setTeamCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const teamId = "430c1163-a2ea-48b2-ab31-161de8e75d22";
 
   const isOwner = role === "Owner";
+
+  const copyTeamId = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(teamId);
+      setStatusMessage("Team ID copied.");
+    } catch (error) {
+      console.error(error);
+      setStatusMessage("Could not copy Team ID.");
+    }
+  }, [teamId]);
 
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
@@ -91,7 +103,7 @@ function CreateProfileContent() {
           name,
           role,
           teamName,
-          teamCode
+          teamCode,
         );
         const response = await request("/profile/createProfile", "POST", {
           userId,
@@ -113,7 +125,7 @@ function CreateProfileContent() {
         setIsSubmitting(false);
       }
     },
-    [isOwner, name, presetEmail, role, teamCode, teamName, router]
+    [isOwner, name, presetEmail, role, teamCode, teamName, router],
   );
 
   return (
@@ -123,9 +135,29 @@ function CreateProfileContent() {
           <p className="text-sm text-muted-foreground">
             Step 2 · Complete your profile
           </p>
+          <div className="flex items-center gap-3 text-sm text-muted-foreground mt-2">
+            <span className="flex items-center gap-2">
+              <span>Team ID:</span>
+              <span className="font-mono text-foreground select-all">
+                {teamId}
+              </span>
+            </span>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="gap-2"
+              onClick={copyTeamId}
+              disabled={!teamId}
+            >
+              <Copy className="size-4" />
+              Copy ID
+            </Button>
+          </div>
           <h1 className="text-2xl font-bold text-foreground">Set your role</h1>
           {presetEmail && (
-            <p className="text-sm text-muted-foreground">Email: {presetEmail}</p>
+            <p className="text-sm text-muted-foreground">
+              Email: {presetEmail}
+            </p>
           )}
         </header>
 
