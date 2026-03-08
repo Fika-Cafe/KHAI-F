@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -25,10 +25,11 @@ export default function ConfirmPage() {
 }
 
 function ConfirmContent() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const code = useMemo(
     () => searchParams.get("access_token")?.trim() ?? "",
-    [searchParams]
+    [searchParams],
   );
 
   const [status, setStatus] = useState<Status>("idle");
@@ -46,7 +47,7 @@ function ConfirmContent() {
     } catch (error) {
       setStatus("error");
       setMessage(
-        "We couldn't confirm the code. Try again or request a new link."
+        "We couldn't confirm the code. Try again or request a new link.",
       );
     }
   }, [code]);
@@ -58,6 +59,10 @@ function ConfirmContent() {
   const handleRetry = useCallback(() => {
     setRetryCount((value) => value + 1);
   }, []);
+
+  const handleGoToBase = useCallback(() => {
+    router.push("/");
+  }, [router]);
 
   const isLoading = status === "loading";
 
@@ -100,6 +105,15 @@ function ConfirmContent() {
               Retry
             </Button>
           )}
+
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleGoToBase}
+            className="w-full"
+          >
+            Back to login
+          </Button>
         </CardContent>
       </Card>
     </PageShell>
