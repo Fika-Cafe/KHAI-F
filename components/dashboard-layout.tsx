@@ -11,6 +11,8 @@ import {
   Settings,
   Users,
   ChevronLeft,
+  Menu,
+  X,
   Moon,
   Sun,
   Upload,
@@ -31,6 +33,7 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { UploadModal } from "@/components/upload-modal";
 import { verifyProfile } from "@/lib/verifications";
+import { useIsMobile } from "@/hooks/use-mobile";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: Home },
   { name: "Chat", href: "/chat", icon: Sparkles },
@@ -51,6 +54,7 @@ const accentColors = [
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
+  const isMobile = useIsMobile();
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [theme, setTheme] = useState<"light" | "dark">("dark");
@@ -122,6 +126,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     runVerify();
   }, [router, userId, loadUserInfoFromStorage]);
 
+  useEffect(() => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
+  }, [isMobile]);
+
   const toggleTheme = () => {
     setTheme((prev) => (prev === "dark" ? "light" : "dark"));
   };
@@ -144,17 +154,28 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background">
+      {isMobile && sidebarOpen && (
+        <button
+          type="button"
+          aria-label="Close navigation menu"
+          className="fixed inset-0 z-30 bg-black/50"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed left-0 top-0 z-40 h-screen bg-sidebar border-r border-sidebar-border transition-all duration-300",
-          sidebarOpen ? "w-64" : "w-16"
+          "fixed left-0 top-0 z-40 h-dvh bg-sidebar border-r border-sidebar-border transition-all duration-300",
+          isMobile
+            ? cn("w-64", sidebarOpen ? "translate-x-0" : "-translate-x-full")
+            : cn("translate-x-0", sidebarOpen ? "w-64" : "w-16"),
         )}
       >
         <div className="flex flex-col h-full">
           {/* Logo */}
           <div className="flex items-center justify-between p-4 border-b border-sidebar-border">
-            {sidebarOpen ? (
+            {!isMobile && sidebarOpen ? (
               <div className="flex items-center gap-2">
                 <div className="size-8 bg-sidebar-primary rounded-lg flex items-center justify-center p-4">
                   <span className="text-sidebar-primary-foreground font-bold text-lg">
@@ -175,18 +196,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <Button
               variant="ghost"
               size="icon"
-              onClick={() => setSidebarOpen(!sidebarOpen)}
+              onClick={() => setSidebarOpen((prev) => !prev)}
               className={cn(
                 "text-sidebar-foreground",
-                !sidebarOpen && "mx-auto mt-2"
+                !sidebarOpen && "mx-auto mt-2",
               )}
             >
-              <ChevronLeft
-                className={cn(
-                  "size-4 transition-transform",
-                  !sidebarOpen && "rotate-180"
-                )}
-              />
+              {isMobile ? (
+                <X className="size-4" />
+              ) : (
+                <ChevronLeft
+                  className={cn(
+                    "size-4 transition-transform",
+                    !sidebarOpen && "rotate-180",
+                  )}
+                />
+              )}
             </Button>
           </div>
 
@@ -196,13 +221,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               const Icon = item.icon;
               const isActive = pathname === item.href;
               return (
-                <Link key={item.name} href={item.href}>
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  onClick={() => isMobile && setSidebarOpen(false)}
+                >
                   <div
                     className={cn(
                       "flex items-center gap-3 px-3 py-2 rounded-lg transition-colors",
                       isActive
                         ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                     )}
                   >
                     <Icon className="size-5 shrink-0" />
@@ -216,7 +245,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </nav>
 
           {/* User Menu */}
-          {sidebarOpen && (
+          {(sidebarOpen || isMobile) && (
             <div className="p-4 border-t border-sidebar-border">
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -255,12 +284,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <div
         className={cn(
           "transition-all duration-300",
-          sidebarOpen ? "ml-64" : "ml-16"
+          isMobile ? "ml-0" : sidebarOpen ? "ml-64" : "ml-16",
         )}
       >
         {/* Header */}
         <header className="sticky top-0 z-30 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
           <div className="flex items-center gap-4 px-6 py-4">
+            {isMobile && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setSidebarOpen(true)}
+                aria-label="Open navigation menu"
+              >
+                <Menu className="size-5" />
+              </Button>
+            )}
             {/* Global Search */}
             <div className="flex items-center gap-2 ml-auto">
               <Button
@@ -288,7 +327,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                           "size-10 rounded-md transition-all hover:scale-110",
                           color.class,
                           accentColor === color.value &&
-                            "ring-2 ring-offset-2 ring-offset-background ring-foreground"
+                            "ring-2 ring-offset-2 ring-offset-background ring-foreground",
                         )}
                         title={color.name}
                       />
