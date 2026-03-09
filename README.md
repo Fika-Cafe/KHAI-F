@@ -29,6 +29,25 @@ npm run build
 npm start
 ```
 
+## Deploy on Railway
+1) Push this repository to GitHub.
+2) In Railway, create a new project and select this repo.
+3) Add environment variables in Railway:
+```
+NEXT_PUBLIC_URL=
+NEXT_PUBLIC_HOSTEDCHAT=
+```
+4) Deploy. Railway will use:
+- Build command: `npm run build`
+- Start command: `npm run start -- -H 0.0.0.0 -p $PORT`
+
+## Deploy checklist
+- `railway.json` exists with explicit build/start commands.
+- `package.json` defines Node engine (`>=20.9.0`).
+- `components/ai-chat-interface.tsx` loads n8n chat CSS via CDN at runtime.
+- Railway variables are set (`NEXT_PUBLIC_URL`, `NEXT_PUBLIC_HOSTEDCHAT`).
+- Backend CORS/cookies allow your Railway frontend domain.
+
 ## Key features
 - **Authentication**: login/register tabs in `app/page.tsx`.
 - **Dashboard**: sidebar layout, theme/accent controls, upload modal (`components/dashboard-layout.tsx`, `upload-modal.tsx`).
