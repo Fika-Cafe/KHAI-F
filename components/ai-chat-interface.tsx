@@ -1,11 +1,21 @@
 "use client";
 
 import { useEffect } from "react";
-import "@n8n/chat/style.css";
 import { createChat } from "@n8n/chat";
 
 export default function ChatInterface() {
   useEffect(() => {
+    const stylesheetId = "n8n-chat-stylesheet";
+    let appendedStylesheet = false;
+    if (!document.getElementById(stylesheetId)) {
+      const link = document.createElement("link");
+      link.id = stylesheetId;
+      link.rel = "stylesheet";
+      link.href = "https://cdn.jsdelivr.net/npm/@n8n/chat/dist/style.css";
+      document.head.appendChild(link);
+      appendedStylesheet = true;
+    }
+
     const chatApp = createChat({
       webhookUrl: `${process.env.NEXT_PUBLIC_HOSTEDCHAT}`,
       webhookConfig: {
@@ -21,13 +31,12 @@ export default function ChatInterface() {
       metadata: {},
       showWelcomeScreen: false,
       defaultLanguage: "en",
-      initialMessages: [
-        "My name is KHAI. How can I assist you today?",
-      ],
+      initialMessages: ["My name is KHAI. How can I assist you today?"],
       i18n: {
         en: {
           title: "KnowledgeHub AI Assistant",
-          subtitle: "this is our personal assistant, feel free to ask me anything about the company documentation",
+          subtitle:
+            "this is our personal assistant, feel free to ask me anything about the company documentation",
           footer: "powered by KnowledgeHub AI",
           getStarted: "New Conversation",
           inputPlaceholder: "Type your question..",
@@ -47,13 +56,16 @@ export default function ChatInterface() {
         container.innerHTML = "";
       }
       (chatApp as unknown as { unmount?: () => void })?.unmount?.();
+
+      if (appendedStylesheet) {
+        document.getElementById(stylesheetId)?.remove();
+      }
     };
   }, []);
 
   return (
     <section className="h-[calc(100vh-140px)] min-h-[600px] w-full overflow-hidden rounded-xl border border-border bg-card shadow">
       <div className="flex h-full flex-col">
-
         <div id="n8n-chat" className="flex-1 bg-background/60" />
       </div>
     </section>
