@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,7 @@ const fetchSearch = async (userId: string, query: string) => {
 };
 
 export function SearchResults() {
+  const router = useRouter();
   const searchParams = useSearchParams();
   const initialQuery = searchParams?.get("q") || "";
   const [query, setQuery] = useState(initialQuery);
@@ -120,6 +121,17 @@ export function SearchResults() {
   ];
 
   const uniqueQueries = [...new Set(logs.map((log) => log.query))];
+
+  const handleResultClick = (result: (typeof combinedResults)[number]) => {
+    if (result.type === "document") {
+      router.push(`/document/${result.id}`);
+      return;
+    }
+
+    if (result.source) {
+      window.open(result.source, "_blank", "noopener,noreferrer");
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto space-y-6">
@@ -224,6 +236,7 @@ export function SearchResults() {
           <Card
             key={result.id}
             className="border-border hover:bg-accent/50 transition-colors cursor-pointer"
+            onClick={() => handleResultClick(result)}
           >
             <CardContent className="p-5">
               <div className="flex items-start gap-4">
